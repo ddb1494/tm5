@@ -1,0 +1,17 @@
+{
+	"name": "tm4",
+	"short_name": "tm4",
+	"start_url": "/tm4/",
+	"theme_color": "#FFFFFF",
+	"background_color": "#FFFFFF",
+	"orientation": "portrait-primary",
+	"display": "standalone",
+	"scope": "/tm4/",
+	"icons": [
+		{
+			"src": "/tm4/remu.png",
+			"type": "image/png",
+			"sizes": "144x144"
+		}
+	]
+}

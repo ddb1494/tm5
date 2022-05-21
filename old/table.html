@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<script src="/lib/jquery.min.js"></script>
+	<script src="jquery.resizablecolumns.js"></script>
+	<link href="jquery.resizableColumns.css" rel="stylesheet">
+	<title>table</title>
+</head>
+<style>
+textarea{width:100%;min-height:10em;}
+</style>
+<body>
+paste:<br>
+<textarea id="tablePaste"></textarea>
+<br>cn:<br>
+<textarea id="cn"></textarea>
+<br>ko:<br>
+<textarea id="ko"></textarea>
+
+<table>
+	<thead>
+		<tr><th>id</th><th>name</th></tr>
+	</thead>
+	<tbody>
+		<tr> <td>3</td> <td>Baba</td> </tr>
+		<tr> <td>1</td> <td>Caca</td> </tr>
+		<tr> <td>2</td> <td>Anan</td> </tr>
+	</tbody>
+</table>
+</body>
+</html>
+<script>
+const { log } = console
+
+let ko=/[\u3131-\u314e\u314f-\u3163\uac00-\ud7a3]/;
+
+let t = $('#tablePaste');
+let arr
+let koArr
+let cnArr
+let koArrCharCount
+let cnArrCharCount
+let koStr
+let cnStr
+
+
+t.on('change',function(e){
+
+	koStr=''
+	cnStr=''
+
+	arr = t.val()
+	.trim()
+	.split('\n')
+	.map(function(e){
+		return e.split('\t');
+	});
+
+	koArr = [];
+	cnArr = [];
+	koArrCharCount = 0;
+	cnArrCharCount = 0;
+
+	arr.forEach(function(e){
+		if(b = ko.test(e[1])){
+			koArr.push(e);
+			koArrCharCount += e[0].length;
+			koStr+='\n'+e.join('\t');
+		}else{
+			cnArr.push(e);
+			cnArrCharCount += e[0].length;
+			cnStr+='\n'+e.join('\t');
+		}
+	});
+
+
+	console.log('CN %d행 %d자', cnArr.length, cnArrCharCount);
+	console.log('KO %d행 %d자', koArr.length, koArrCharCount);
+	$('#ko').val(koStr)
+	$('#cn').val(cnStr)
+
+})
+
+
+$('table')
+.find('th,td').css({
+	border:'1px solid #000'
+})
+.end().resizableColumns()
+
+
+
+</script>

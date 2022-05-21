@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Replace</title>
+	<script src="/lib/vue.min.js"></script>
+	<style>
+		#app {
+	display:grid;
+	grid-template-columns:  auto 1fr;
+	grid-gap: 1px;
+}
+textarea {
+	min-height: 3em;
+	border: none;
+	outline: none;
+	background-color: antiquewhite;
+	resize: none;
+}
+</style>
+</head>
+
+<body>
+	<div id="app">
+		regExp.source:
+		non string regexp: <input v-model="useRegExp" type="checkbox">
+		<div>
+			g:<input v-model="g" type="checkbox">
+			i:<input v-model="i" type="checkbox">
+			m:<input v-model="m" type="checkbox">
+		</div>
+		source:<textarea v-model="source" v-on:input="run"></textarea>
+		replace:<textarea v-model="replace" v-on:input="run"></textarea>
+		string: <textarea v-model="string" v-on:input="run"></textarea>
+		result: <textarea v-model="result" readonly></textarea>
+		equal: <input type="checkbox" v-model="equal" disabled>
+	</div>
+
+	<script>
+		// 没有打开正则表达式 #app
+		let v = new Vue({
+			el: '#app',
+			data: {
+				useRegExp: false,
+				g: true,
+				i: true,
+				m: true,
+				source: '',
+				replace: '_',
+				string: 'abcd dcba 102a202. 99.cc',
+				result: '',
+				equal: false,
+			},
+			methods: {
+				run(e) {
+
+					let source, regExp;
+
+					if (source) {
+						source = source;
+						source = source.replace(/[\\\[\{\(\.\?\*\+]/g, '\\$&');
+						regExp = new RegExp(source, (this.g ? 'g' : '') + (this.i ? 'i' : '') + (this.m ? 'm' : ''));
+						console.warn(regExp);
+					}
+
+					if (this.source && this.string) {
+						this.result = this.string.replace(regExp, (...args) => {
+							return this.replace;
+						});
+
+						this.equal = this.result === this.string;
+					}
+
+				}
+			}
+		})
+
+
+
+		class Replacer {
+			offRegExp(src, opt = 'gim') {
+				src = src.replace(/[\\\[\{\(\.\?\*\+\^\$]/g, '\\$&');
+				this.regExp = new RegExp(src, opt);
+				return regExp;
+			}
+			off(text, tar='') {
+				return text.replace(this.regExp, tar);
+			}
+
+			onRegExp(src, opt = 'gim') {
+				this.regExp = new RegExp(src, opt);
+			}
+			on(text,tar='') {
+				return text.replace(this.regExp, tar);
+			}
+		}
+	</script>
+</body>
+
+</html>

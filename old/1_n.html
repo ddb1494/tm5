@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="/lib/jquery.js"></script>
+<script src="ao.js"></script>
+<title>paste</title>
+<style type="text/css">
+/*body {text-align:center;}*/
+* {font-family:Verdana,"Microsoft Yahei",NSimSun,Tahoma!important;}
+th {background:#000;color:#fff;text-align:left;}
+td {border:1px solid #ccc!important;vertical-align: top!important; }
+table {margin:auto;margin-top:5em;}
+#preview {
+	position:fixed;top:10px; right:0;
+	background:#fff;color:#000;
+	border: 2px solid #0c0;
+}
+#dict {
+	min-width: 300px; min-height:200px
+}
+</style>
+</head>
+<body>
+<h3>Misstion</h3>
+<table>
+<tr><th>source</th><th>target</th></tr>
+<tr><td class="source">게임 옵션</td><td class="target" contenteditable="true"></td></tr>
+<tr><td class="source">게임 옵션 1</td><td class="target" contenteditable="true"></td></tr>
+<tr><td class="source">게임 옵션 2</td><td class="target" contenteditable="true"></td></tr>
+</table>
+<h3>Dictionary</h3>
+<textarea id="dict">[
+['게임','游戏'],
+['옵션','属性'],
+['옵션','选项'],
+['옵션','参数'],
+]</textarea>
+</body>
+</html>
+<script>
+let dict=flushDict()
+
+$('#dict').on('change',function(){
+	dict=flushDict()
+});
+
+function flushDict(){
+	let s=$('#dict').val()
+	let a
+	try{
+		a=eval(s)
+		$('#dict').css({border:'2px solid green'})
+	}catch(err){
+		alert(err.message)
+		$('#dict').css({border:'2px solid red'})
+	}
+	return a
+}
+
+
+$('.target').on('focus',function(e){
+	let
+	target=e.target,
+	source=$(target).parent().find('.source').get(0),
+	text=source.textContent,
+	array=text.split(/\s/g)
+
+	console.log(text)
+
+	array.forEach(e=>{
+		console.log(e)
+		// createTip(e)
+	})
+	
+
+})
+
+function createTip(search){
+	let tips=dict.filter(e=>e[0].trim()===search)
+	console.log(tips)
+}
+
+
+
+flushDict();
+</script>

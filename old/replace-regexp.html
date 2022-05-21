@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Replace</title>
+	<script src="/lib/vue.min.js"></script>
+<style>
+#app {
+	display:grid;
+	grid-template-columns:  auto 1fr;
+	grid-gap: 1px;
+}
+textarea {
+	min-height: 3em;
+	border: none;
+	outline: none;
+	background-color: antiquewhite;
+	resize: none;
+}
+label {
+	padding-right: 24px;
+	background-color: aquamarine;
+	border-radius: 3px;
+	margin-bottom: 3px;
+}
+</style>
+</head>
+<body>
+	<div id="app">
+		
+		<span>non string regexp:</span>
+		<input v-model="useRegExp" type="checkbox" readonly>
+		
+		<span>Option:</span>
+		<div>
+			<label><input v-model="g" type="checkbox">g</label>
+			<label><input v-model="i" type="checkbox">i</label>
+			<label><input v-model="m" type="checkbox">m</label>
+		</div>
+		source:<textarea v-model="source" v-on:input="run"></textarea>
+		replace:<textarea v-model="replace" v-on:input="run"></textarea>
+		string: <textarea v-model="string" v-on:input="run"></textarea>
+		result: <textarea v-model="result" readonly></textarea>
+		result2: <textarea v-model="result2" readonly></textarea>
+		result3: <textarea v-model="result3" readonly></textarea>
+		equal: <input type="checkbox" v-model="equal" disabled>
+	</div>
+
+<script>
+// 没有打开正则表达式 #app
+let v = new Vue({
+	el:'#app',
+	data:{
+		useRegExp:true,
+		g:true,
+		i:true,
+		m:true,
+		string:'abcd dcba 102a202. 99.cc',
+		source:'.(c)',
+		replace:'<$&>',
+		result:'',
+		result2:'',
+		result3:'',
+		equal:false,
+	},
+	methods: {
+		run(e){
+
+			let regExp, source, option=(this.g?'g':'')+(this.i?'i':'')+(this.m?'m':'');
+			
+			if(this.source) {
+				source = this.source;
+				// source = source.replace(/[\\\[\{\(\.\?\*\+]/g,'\\$&');
+				try{
+					regExp = new RegExp( source, option);
+				}catch(err) {
+					console.warn(err.message);
+					return false;
+				}
+				console.log(regExp);
+			}
+
+			if(this.source && this.string) {
+				this.result = this.string.replace(regExp, (...args)=>{
+					args=args.slice(0,-2);
+					let replace = this.replace;
+					replace = replace.replace(/\$(\$?)(\d{1,2}|&)/g, (...a)=>{
+						if(a[1]) {
+							return a[0].slice(1);
+						}else{
+							let i=a[2]==='&'?'0':a[2];
+							let v=args[i];
+							if(v!==undefined) {
+								return v;
+							}else{
+								return a[0];
+
+							}
+						}
+						return a[1]?a[0].slice(1):args[a[2]==='&'?'0':a[2]];
+					});
+					return replace;
+				});
+				
+
+				// 检查是否一致
+				try{
+					this.result2 = this.string.replace( new RegExp(this.source, option), this.replace);
+
+					let code=JSON.stringify(v.string)+'.replace(/'+JSON.stringify(v.source).slice(1,-1)+'/g,'+JSON.stringify(v.replace)+')';
+					this.result3 = eval(code) + '\n'+code;
+				}catch(err){
+					console.warn(err.message);
+					return false;
+				}
+				this.equal = this.result === this.result2;
+			}
+
+		}
+	}
+})
+
+</script>
+</body>
+</html>

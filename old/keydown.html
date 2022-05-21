@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<link id="favicon" rel="icon" href="/fav/writing.png">
+	<title></title>
+</head>
+
+<body>
+
+	<style>
+		#div1,
+		#div2,
+		#div3 {
+			width: 100px;
+			height: 30px;
+			border: 2px solid #000;
+		}
+	</style>
+	<div id="div1">1</div>
+	<div id="div2">2</div>
+	<div id="div3">3</div>
+
+	<script src="lib/hotkey.js"></script>
+	<script>
+
+		let context = ''
+
+		let handles = {
+			div1: {
+				keydown: [
+					function (e) {
+						console.log(e, this)
+					}
+				]
+			}
+		}
+
+
+		window.addEventListener('click', (e) => {
+			console.log(e.target.id)
+			context = e.target.id;
+		});
+
+		window.addEventListener('keydown', (e) => {
+			console.log(hotkey(e), e.repeat, context)
+
+			let z = handles[context]
+			if (z) {
+				z = z[e.type]
+				if (Array.isArray(z)) {
+					z.forEach(handle => {
+						Reflect.apply(handle, e.target, e);
+					})
+				}
+			}
+		});
+
+
+		// {type:'keydown', key:'a', handle:function(){}, context:'div1' }
+
+		Reflect.apply((...e) => { console.log(this, e) }, { a: 1 }, ['e','b'])
+
+	</script>
+</body>
+
+</html>

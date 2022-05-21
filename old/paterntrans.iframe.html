@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>Pattern Trans</title>
+</head>
+
+<body>
+	<style>
+		* {
+			box-sizing: border-box;
+			outline-width: 1px !important;
+			padding: 0;
+			margin: 0;
+			overflow: overlay;
+			font-family: Microsoft Yahei, Meiryo UI, Malgun Cothic;
+		}
+
+		table {
+			border-collapse: collapse;
+			margin: 0 auto;
+			height: 100vh;
+			font-size: 10pt;
+		}
+
+		th {
+			height: 1em;
+			background-color: #eee;
+		}
+
+		#source,
+		#target {
+			-webkit-user-modify: read-write-plaintext-only;
+			white-space: pre-wrap;
+			word-wrap: break-word;
+			word-break: break-all;
+			width: 50vw;
+			max-width: 50vw;
+			min-width: 50vw;
+			vertical-align: top;
+			padding: 1em;
+		}
+
+		.symbol {
+			-webkit-user-modify: read-only;
+			/* user-select: none; */
+			background-color: black;
+			color: white;
+			padding: 0 4px;
+			font-size: x-small;
+			line-height: 1.5em;
+			border-radius: 0.5em;
+			cursor: pointer;
+		}
+
+		.symbol:hover {
+			background-color: gold;
+		}
+
+		#target {
+			border-left: 0.5px solid #eee;
+		}
+	</style>
+	<table>
+		<thead>
+			<tr>
+				<th class="no"></th>
+				<th class="source">Source</th>
+				<th class="target">Target</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<th></th>
+				<th>
+					<label>begin<input id="begin" type="checkbox" value="begin" checked></label>
+					<label><input id="end" type="checkbox" value="end" checked>end</label>
+					<button id="filterButton">Filter(ctrl+f)</button>
+				</th>
+				<th><button id="applyButton">Apply(ctrl+enter)</button></th>
+			</tr>
+			<tr>
+				<td></td>
+				<td id="source" autofocus></td>
+				<td id="target"></td>
+			</tr>
+			<tr>
+				<th colspan="3">F9키로 변수 입력합니다</th>
+			</tr>
+		</tbody>
+	</table>
+
+</body>
+<script>
+	// if (!self.opener) { let s = '需要父级窗口'; document.body.innerHTML = s; throw new Error(s); }
+
+	let selection = getSelection();
+	let i = 0;
+
+	// F9插入标签
+	self.addEventListener('keydown', (e) => {
+		let { target } = e;
+
+		if (target.nodeName !== 'TD') return;
+
+		if (!e.repeat && e.keyCode === 120 && !e.ctrlKey && !e.altKey && !e.shiftKey && !e.metaKey) {// F9
+			e.preventDefault();
+
+			let id = target.getAttribute('id');
+
+			if (id === 'source') {
+				let range = selection.getRangeAt(0);
+
+				if (range) {
+					i++;
+
+					let symbol = document.createElement('b');
+					symbol.className = 'symbol';
+					symbol.setAttribute('name', 'p' + i);
+					symbol.textContent = 'p' + i;
+					range.insertNode(symbol);
+					range.collapse();
+
+					symbol.addEventListener('contextmenu', (e) => {
+						e.preventDefault();
+						let name = e.target.getAttribute('name');
+						Array.from(document.querySelector('#target').querySelectorAll('.symbol')).some(e => {
+							let _name = e.getAttribute('name');
+							let b = name === _name;
+							if (b) e.remove();
+							return b;
+						});
+						e.target.remove();
+					})
+				}
+
+			} else if (id === 'target') {
+				let range = selection.getRangeAt(0);
+
+				if (range) {
+
+					let source = document.querySelector('#source');
+
+					let sourceSymbols = Array.from(source.querySelectorAll('.symbol'), e => e.getAttribute('name'));
+					let targetSymbols = Array.from(target.querySelectorAll('.symbol'), e => e.getAttribute('name'));
+
+					console.log(sourceSymbols)
+					console.log(targetSymbols)
+
+					sourceSymbols.some(name => {
+						let b = !targetSymbols.includes(name);
+						if (b) {
+							let symbol = document.createElement('b');
+							symbol.className = 'symbol';
+							symbol.setAttribute('name', name);
+							symbol.textContent=name;
+							symbol.addEventListener('contextmenu', (e) => e.target.remove());
+							range.insertNode(symbol);
+							range.collapse();
+						}
+						return b;
+					})
+				}
+
+			}
+
+
+		} else if (!e.repeat && e.keyCode === 70 && e.ctrlKey && !e.altKey && !e.shiftKey && !e.metaKey) {// ctrl+f
+			e.preventDefault();
+			document.querySelector('#filterButton').click();
+		} else if (!e.repeat && e.keyCode === 13 && e.ctrlKey && !e.altKey && !e.shiftKey && !e.metaKey) {// ctrl+enter
+			e.preventDefault();
+			document.querySelector('#applyButton').click();
+		}
+	}, { passive: false });
+
+	window.addEventListener('contextmenu', (e) => e.preventDefault());
+
+
+	function getPatern(id, b=true) {
+		let element = document.getElementById(id);
+		element.normalize();
+
+		return Array.from(element.childNodes).map(e => {
+			let result = '';
+			switch (e.nodeType) {
+				case 3:
+					result = b ? e.data.replace(/[\?\!\:\-\*\+\/\\\(\<\[\{\.]/g, '\\$&') : e.data;
+					break;
+				case 1:
+					result = { type: 'symbol', name: e.getAttribute('name') };
+					break;
+				default:
+					result = String(e);
+					break;
+			}
+			return result;
+		});
+	}
+
+
+	document.querySelector('#filterButton').addEventListener('click', e => {
+		opener.postMessage({
+			type: 'paterntrans-filter',
+			source: getPatern('source'),
+			begin: document.querySelector('#begin').checked,
+			end: document.querySelector('#end').checked,
+		});
+	});
+	document.querySelector('#applyButton').addEventListener('click', e => {
+		opener.postMessage({
+			type: 'paterntrans-apply',
+			source: getPatern('source'),
+			target: getPatern('target', false),// 坑：对target没有必要转义，因为没用正则方式。
+			begin: document.querySelector('#begin').checked,
+			end: document.querySelector('#end').checked,
+		});
+	});
+
+	document.querySelector('#end').addEventListener('click', (e) => document.querySelector('#source').focus())
+	document.querySelector('#begin').addEventListener('click', (e) => document.querySelector('#source').focus())
+
+	self.addEventListener('message', (e) => {
+		if (e.data.type === 'init') {
+			document.querySelector('#source').textContent = e.data.source;
+			document.querySelector('#target').textContent = e.data.target;
+		}
+		console.log(e.data)
+	}, {capture:false});
+
+	self.addEventListener('load', (e)=>{
+		opener.postMessage({type:'init'});
+	})
+</script>
+
+</html>

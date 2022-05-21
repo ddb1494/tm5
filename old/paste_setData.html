@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<title>paste</title>
+</head>
+
+<style type="text/css">
+	textarea {
+		width: 100%;
+		min-height: 10em;
+		background: #333;
+		color: #fff;
+	}
+</style>
+
+<body>
+	<textarea></textarea>
+</body>
+
+</html>
+<script>
+	let { debug, log, warn, error } = console
+
+	document.querySelector('textarea').value = '1\n2\n3\n4'
+
+	// copy或cut时可以setData，但由于无法getData获取复制体，只能用Selection进行获取。
+	document.addEventListener('copy', function (e) {
+		e.preventDefault()// 阻止默认事件才能生效
+		let cd = e.clipboardData;
+		let type = 'text/plain'
+		let data = document.getSelection().toString().replace(/\n/g, '')
+		cd.setData(type, data)
+	}, false)
+
+	document.addEventListener('paste', function (e) {
+		let cd = e.clipboardData;
+		let type = 'text/plain'
+		let text
+		if (cd.types.indexOf(type) !== -1) {
+			text = cd.getData(type)
+			debug(cd.getData(type))
+		}
+
+	}, false)
+
+</script>

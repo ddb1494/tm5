@@ -1,0 +1,435 @@
+<!DOCTYPE html><html><head><meta charset="utf-8">
+<script src="/lib/jquery.js"></script>
+<script src="/lib/util.format.js"></script>
+<script src="/lib/ao.browserType.js"></script>
+<link rel="stylesheet" type="text/css" href="index.css">
+<title>TextTool</title>
+</head>
+<body>
+<table id="box1">
+<tbody>
+<tr>
+	<td colspan="3" style="height:auto;padding-bottom:6px;">
+		<label><input id="wrap" type="checkbox">TextareaWrap</label>
+		<button id="clearSource">clearSource</button>
+		<button id="copyToReference">copy</button>
+		<label><button id="naverGoogleDaum" disabled>中NaverGoogleDaum</button></label>
+	</td>
+</tr>
+<tr>
+	<td rowspan="2"><textarea id="source" placeholder="source" wrap="off"></textarea></td>
+	<td rowspan="2"><textarea id="work" placeholder="work" wrap="off"></textarea></td>
+	<td><textarea id="reference" placeholder="reference" wrap="off" readOnly></textarea></td>
+</tr>
+<tr>
+	<td><textarea id="dict" placeholder="dict" wrap="off"></textarea></td>
+</tr>
+<tr>
+	<td colspan="3" style="height: 50px;">
+		<textarea id="stat" placeholder="stat" wrap="off"></textarea>
+	</td>
+</tr>
+</tbody>
+</table>
+
+<div>
+row:<span id="rowCurrentUI"></span>/<span id="rowTotalUI"></span><br>
+naver:<pre id="naver"></pre><br>
+google:<pre id="google"></pre><br>
+google:<pre id="google"></pre>
+</div>
+</body>
+</html>
+<script>
+var script={
+	browserNotIsChrome: '브라우저가 Chrome이 아니어서 정상적으로 사용할 수 없습니다.',
+	sourceClearMessage: 'Source 내용을 지우시겠습니까?',
+	selectionMessage: '선택위치: %s~%s(%s)  텍스트: %s',
+	workReplaceMessage: 'work에서 아래 검색 바꿈을 실행하시겠습니까?\n검색 내용: %s\n바꿀 내용: %s'
+};
+</script>
+<script>
+(function(){
+	var browser = browserType();
+	if(!browser.chrome) {
+		alert(script.browserNotIsChrome);
+	}
+	$('#stat').attr('placeholder', browser.result);
+})();
+</script>
+<script>
+$('#source').attr('placeholder',`Source의 톡톡
+
+안녕, 친구야~
+난 Source야, 너의 임무를 넣어줘.
+
+나에겐 번역해야 할 텍스트만 줘, 제발~
+문장을 토막내지 말고 한줄로 말이야.
+
+여기서 직접 편집하거나
+옆에 Work친구한테 가서 편집해도 좋아~
+그래도 Work친구한테 가해.
+거기가 더 편해~
+Reference친구가 Work에게 더 잘해줘...
+
+여기서 마우스로 단어를 선택하면
+work친구가 열심히 베껴쓸거야.ㅋㅋ 이녀석.
+
+번역 다 하고 나면
+상단의 [copy]버튼을 눌러줘~
+그러면 Reference친구가
+복사가 제대로 되는지 체크해 줄거야.
+버튼이 제대로 작동되면
+다른데 가서 <Ctrl+V>해서
+<붙여넣기>를 할 수 있어~
+
+나를 비우려면
+상단의 [Clear]을 눌러줘~
+
+
+예:
+나를 번역해 주세요.
+나를 편집해 주세요.
+`);
+$('#work').attr('placeholder',`Work의 톡톡
+
+안녕~
+난 Work야.
+
+내친구 Source는 참 주문이 많은 애지.
+후...오늘도 나를 빡세게 굴리는군.
+
+여기서 편집을 하다가
+마우스 우클릭을 하면,
+새로운 결과를
+Source한테 보내줄꺼야!
+
+몇줄 가져왔으면 몇줄로 해서
+다시 돌려줘야 하니 주의해줘!
+
+그러니까! 함부로 줄을
+추가하거나 삭제하면 안돼!
+알겠지~?!
+`);
+$('#dict').attr('placeholder',`Dict의 톡톡
+
+안녕~
+난 Dict. 용어집이라고 불러줘.
+
+난 "원문	번역문"(Tab키로 토막냄)
+이런 형식의 2개열을 보관하거든.
+엑셀에서 두개 열을 복사하거나
+SublimeText에서 Tab키를 눌러서 갈라줘.
+주의! 엑셀 한개 칸에 많은 행은 지원 안해.
+
+그래서 말인데~
+짧게, 단어만 해줬으면 좋겠어.
+
+날 비어두면
+Source랑 Work랑 Reference랑은
+영영 친해질 수가 없지롱~
+`);
+$('#reference').attr('placeholder',`Reference의 톡톡
+
+안녕~
+내 이름은 Reference야.
+
+Source랑 Work에서 단어를 선택하면
+난 Dict한테 가서 단어를 찾아와~
+
+여기서 더블클릭하면
+Work에서 전체를 바꾸지~
+너한테 딱 필요할거야.
+
+그리고 날 편집하려 들지마!
+아~~ 간지러워...
+`);
+
+// setTimeout(function(){
+// 	$('#source,#work,#dict,#reference').removeAttr('placeholder');
+// },60000);
+</script>
+<script>
+var s = $('#source').get(0);
+var stat = $('#stat').get(0);
+// search
+var arr
+var sarr
+var sarri
+var reg__s = /\s+/g;
+var selectionText;
+var selectionTextRecord =[];
+
+
+var mousedownTarget;
+$(window).on('mousedown',function(e){
+	mousedownTarget=e.target;
+});
+
+$('#source').on('select mouseup input', function(e){
+	if(mousedownTarget===e.target) showStat();
+});
+
+
+$('#source').on('keyup', function(){
+	var _rowStat = rowStat();
+	$('#rowCurrentUI').text(_rowStat.line);
+});
+
+$('#work').on('contextmenu',function(e){
+	e.preventDefault();
+	replaceWorkToSource();
+	saveSource();
+});
+
+$('#work').on('keydown',function(e){
+	if(e.keyCode===91 && e.ctrlKey===true && e.metaKey===true && e.shiftKey===false && e.altKey===false) {
+		// Meta - Windows Key
+		replaceWorkToSource(e);
+	}else if(e.KeyCode===19) {
+
+		var ret=searchDict(getSelectionText('work'));
+		console.log(ret)
+	}
+	saveSource();
+});
+
+
+
+function getSelectionText(id) // javascript
+{
+    // obtain the object reference for the <textarea>
+    var txtarea = document.getElementById(id);
+    // obtain the index of the first selected character
+    var start = txtarea.selectionStart;
+    // obtain the index of the last selected character
+    var finish = txtarea.selectionEnd;
+    // obtain the selected text
+    var sel = txtarea.value.substring(start, finish);
+    // do something with the selected content
+    return sel;
+}
+
+
+function replaceWorkToSource(e){
+	if(arr===undefined||sarr===undefined||sarri===undefined) return console.error('缺少');
+	var newdata = $('#work').val().split('\n');
+
+	if(newdata.length === sarr.length) {
+		var dateNow = (new Date()).toLocaleString();
+		console.group(dateNow);
+		for(var i=0,len=newdata.length; i<len; i++) {
+			arr[sarri[i]] = newdata[i];// 替换source内容
+			console.log(sarri[i]+1,sarr[i],arr[sarri[i]]);
+		}
+		console.groupEnd(dateNow);
+
+		$('#source').val(arr.join('\n'));
+	}else{
+		if(e) e.preventDefault();
+		console.error('need row: %d, current row: %d',sarr.length, newdata.length)
+	}
+}
+
+
+function showStat(){
+	var selectionText = s.value.slice(s.selectionStart,s.selectionEnd);
+	var str = util.format(script.selectionMessage,
+		s.selectionStart, s.selectionEnd, s.selectionDirection,
+		selectionText
+	);
+	stat.value = str;
+
+	var _rowStat = rowStat();
+	$('#rowCurrentUI').text(_rowStat.line);
+	$('#rowTotalUI').text(rowCount());
+	search(selectionText||_rowStat.value)
+}
+
+function rowCount(){
+	return s.value.split('\n').length;
+}
+
+function rowStat(_s){
+	var i = s.selectionDirection==='forward' ? s.selectionEnd : s.selectionStart;
+
+	var line = s.value.slice(0,i).split('\n').length;
+	
+	var start = s.value.lastIndexOf('\n', i-1);
+		start = start===-1 ? 0 : start+1;
+	
+	var end=s.value.indexOf('\n', i);
+	end = end===-1 ? s.value.length : end;
+
+	var value = s.value.slice(start,end);
+
+	return {start:start, end:end, value:value, line:line}
+}
+
+
+function getTextareaStat(ta) {
+	var i = ta.selectionDirection==='forward' ? ta.selectionEnd : ta.selectionStart;
+
+	var line = ta.value.slice(0,i).split('\n').length;
+	
+	var start = ta.value.lastIndexOf('\n', i-1);
+		start = start===-1 ? 0 : start+1;
+	
+	var end=ta.value.indexOf('\n', i);
+	end = end===-1 ? ta.value.length : end;
+
+	var value = ta.value.slice(start,end);
+
+	return {start:start, end:end, value:value, line:line}
+}
+
+
+
+$('#wrap').on('click',function(e){
+	if(e.target.checked) {
+		$('textarea').removeAttr('wrap');
+	}else{
+		$('textarea').attr('wrap','off');
+	}
+});
+
+
+
+function search(t){
+
+	if(t==='\x20'||t===undefined||t==='') return ;
+	arr = s.value.split('\n');
+	sarri = [];
+	sarr = arr.filter(function(e,i){
+		var b = e.replace(reg__s,'').indexOf(t.replace(reg__s, ''))!==-1;
+		if(b) {
+			sarri.push(i);
+		}
+		return b;
+	});
+	work.value = sarr.join('\n')
+	// console.log(t, sarr,sarri)
+
+
+
+	searchDict(t);
+	// searchnaverGoogleDaum(t);
+}
+
+
+$('#naverGoogleDaum').on('mouseenter', function(e){
+	var t = document.activeElement, id=t.getAttribute('id');
+	if(t && id && (t.nodeName==='TEXTAREA')) {
+		searchnaverGoogleDaum(getSelectionText(id));
+	}
+});
+function searchnaverGoogleDaum(t) {
+	$('#google').load('zun/google/?q='+encodeURI(t))
+	$('#naver').load('zun/naver/?q='+encodeURI(t))
+	$('#datm').load('zun/daum/?q='+encodeURI(t))
+}
+
+
+var dictArr;
+var dictSArr;
+$('#dict').on('change',function(e){
+	dictArr = $('#dict').val().trim();
+	if(dictArr.length) {
+		dictArr = dictArr.split('\n');
+	}else{
+		dictArr=null;
+	}
+	saveSource();
+})
+
+function searchDict(t){
+	if(dictArr) {
+		dictSArr = [];
+		dictArr.filter(function(e,i){
+			var b = e.replace(reg__s,'').indexOf(t.replace(reg__s, ''))!==-1;
+			if(b) {
+				dictSArr.push(e);
+			}
+			return b;
+		});
+
+		// dictArr
+		$('#reference').val(dictSArr.join('\n'));
+	}
+}
+
+
+$('#copyToReference').click(function(e){
+	$('#reference').val($('#source').val()).select();
+	document.execCommand('copy');
+});
+
+
+$('#clearSource').click(function(e){
+	if(confirm(script.sourceClearMessage)) $('#source').val('');
+});
+
+
+
+
+// 按下end键，替换work中的内容。
+$('#reference').on('click',function(e){
+	return false;
+});
+$('#reference').on('dblclick',function(e){
+		var stat=getTextareaStat(document.getElementById('reference'));
+		console.log(stat);
+
+		var arr =stat.value.split('\t')
+		var search  = arr[0]
+		var replace = arr[1]
+		console.log(arr);
+		if(search && search.length && replace && replace.length&&
+			confirm(util.format(script.workReplaceMessage, search, replace))){
+
+			var re = new RegExp(search.replace('\\','\\\\'),'g');
+
+			$('#work').val($('#work').val().replace(re, replace));
+		}
+		return false;
+})
+
+
+// 在dict中按下Tab键时，可以输入Tab内容。
+$('#dict').on('keydown',function(e){
+	if(e.keyCode===9 && !e.ctrlKey && !e.altKey && !e.shiftKey && !e.metaKey){
+		onkeydownActiveTextareaInputTabKey(e);
+	}
+})
+
+function onkeydownActiveTextareaInputTabKey(e){
+	e.preventDefault();
+	var t=e.target, v=t.value, start, end, cursor;
+	start = v.slice(0,t.selectionStart);
+	end   = v.slice(t.selectionEnd);
+	cursor = t.selectionStart+1;
+
+
+	t.value = start+'\t'+end;
+	t.setSelectionRange(cursor,cursor);
+}
+
+
+function saveSource(){
+	localStorage.setItem(location.search+location.hash+'/source', $('#source').val());
+	localStorage.setItem(location.search+location.hash+'/dict', $('#dict').val());
+	console.log('save');
+}
+function loadSource(){
+	$('#source').val(localStorage.getItem(location.search+location.hash+'/source'));
+	$('#dict').val(localStorage.getItem(location.search+location.hash+'/dict'));
+	$('#source').trigger('input');
+	$('#dict').trigger('change')
+	console.log('load');
+
+}
+
+loadSource();
+
+
+</script>

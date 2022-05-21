@@ -1,0 +1,82 @@
+* {
+	box-sizing: border-box;
+	font-family: 'Microsoft Yahei', Tahoma, sans-serif;
+}
+html, body {
+	margin: 0;
+	padding: 0;
+}
+
+
+.off {
+	background: tomato;
+}
+.on {
+	background: springgreen;
+}
+.topbar {
+	background: tomato;
+}
+.hidden {
+	display: none!important;
+}
+
+form {
+	height: 80vh;
+	display: grid;
+	grid-template-columns: 1fr auto;
+	grid-template-rows: auto 1fr auto;
+	grid-template-areas: "a b" "c c" "d e";
+}
+
+.message, .nickname {
+	border-bottom: 1px solid steelblue;
+	white-space: break-spaces;
+	word-break: break-all;
+}
+
+.message-log {
+	display: grid;
+	grid-template-columns: 1fr auto;
+	align-items: flex-end;
+	overflow: overlay;
+}
+
+
+button {
+	display: inline;
+}
+code {
+	white-space: pre;
+	border-bottom: 1px dashed #eee;
+	display: block;
+}
+
+
+
+.ui_login, .ui_control_page {
+	width: 100vw;
+	height: 100vh;
+	overflow: overlay;
+	display: flex;
+	flex-direction: column;
+	background-color: gray;
+	padding: 1em;
+}
+
+.display_none {
+	display: none!important;
+}
+
+.ui_control_page > div {
+	padding: 1em 2em;
+	margin-bottom: 1em;
+	background-color: white;
+}
+
+textarea {
+	min-height: 10em;
+	resize: vertical;
+	display: block;
+	width: 100%;
+}

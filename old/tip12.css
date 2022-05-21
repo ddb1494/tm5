@@ -1,0 +1,240 @@
+.tip1, .tip2, .tip3, .tip4, .tip5, .tip6, .tip7, .tip8, .tip9, .tip10, .tip11, .tip12 {
+	position: relative;
+}
+
+.tip1:hover::before, .tip2:hover::before, .tip3:hover::before, .tip4:hover::before, .tip5:hover::before, .tip6:hover::before,
+.tip7:hover::before, .tip8:hover::before, .tip9:hover::before, .tip10:hover::before, .tip11:hover::before, .tip12:hover::before,
+.tip1:hover::after, .tip2:hover::after, .tip3:hover::after, .tip4:hover::after, .tip5:hover::after, .tip6:hover::after,
+.tip7:hover::after, .tip8:hover::after, .tip9:hover::after, .tip10:hover::after, .tip11:hover::after, .tip12:hover::after,
+.tip1:focus::before, .tip2:focus::before, .tip3:focus::before, .tip4:focus::before, .tip5:focus::before, .tip6:focus::before,
+.tip7:focus::before, .tip8:focus::before, .tip9:focus::before, .tip10:focus::before, .tip11:focus::before, .tip12:focus::before,
+.tip1:focus::after, .tip2:focus::after, .tip3:focus::after, .tip4:focus::after, .tip5:focus::after, .tip6:focus::after,
+.tip7:focus::after, .tip8:focus::after, .tip9:focus::after, .tip10:focus::after, .tip11:focus::after, .tip12:focus::after {
+	opacity: 1;
+	z-index: 2;
+	color:#000;
+	background-color: #fff;
+}
+
+.tip1::before, .tip2::before, .tip3::before, .tip4::before, .tip5::before, .tip6::before,
+.tip7::before, .tip8::before, .tip9::before, .tip10::before, .tip11::before, .tip12::before {
+	font-size:12px;
+	background-color: transparent;
+	opacity: 0.2;
+	position: absolute;
+	pointer-events: none;
+	z-index: 1;
+
+	content: '';
+	width:0px;
+	height:0px;
+	border-top-color: transparent;
+    border-right-color: transparent;
+    border-bottom-color: #000;
+    border-left-color: #000;
+	border-width: 3px;
+	border-style:solid;
+}
+
+
+.tip1::after, .tip2::after, .tip3::after, .tip4::after, .tip5::after, .tip6::after,
+.tip7::after, .tip8::after, .tip9::after, .tip10::after, .tip11::after, .tip12::after {
+	font-size:12px;
+	color: #fff;
+	background-color: #000;
+	border: 1px solid #000;
+	opacity: 0.2;
+	z-index: 1;
+	position: absolute;
+	pointer-events: none;
+
+	content: attr(data-tip);
+	width:auto;
+	height:auto;
+	padding: 3px 9px;
+	border-radius: 3px;
+}
+
+
+.tip11::before {
+	transform: translate(0,-100%) rotate(-45deg);
+	top: -3px;
+	right: auto;
+	bottom:auto;
+	left: 6px;
+}
+.tip11::after {
+	transform: translate(0,-100%);
+	top:-6px;
+	right: auto;
+	bottom:auto;
+	left:0;
+}
+
+.tip12::before {
+	transform: translate(-50%, -100%) rotate(-45deg);
+	top: -3px;
+	right: auto;
+	bottom:auto;
+	left: 50%;
+}
+.tip12::after {
+	transform: translate(-50%, -100%);
+	top: -6px;
+	right: auto;
+	bottom:auto;
+	left: 50%;
+}
+
+.tip1::before {
+    transform: translate(-100%,-100%) rotate(-45deg);
+	top: -3px;
+	right: 0;
+	bottom:auto;
+	left: auto;
+}
+.tip1::after {
+	transform: translate(0,-100%);
+	top: -6px;
+	right: 0;
+	bottom:auto;
+	left: auto;
+}
+
+
+
+.tip2::before {
+    transform: translate(100%, 0) rotate(45deg);
+    right: -3px;
+    left: auto;
+    top: 6px;
+    bottom: auto;
+}
+.tip2::after {
+    transform: translate(100%, 0);
+    right: -6px;
+    left: auto;
+    top: 0;
+    bottom: auto;
+}
+
+.tip3::before {
+    transform: translate(100%, -50%) rotate(45deg);
+    right: -3px;
+    left: auto;
+	top: 50%;
+    bottom: auto;
+}
+.tip3::after {
+    transform: translate(100%, -50%);
+    right: -6px;
+    left: auto;
+    top: 50%;
+    bottom: auto;
+}
+
+.tip4::before {
+    transform: translate(100%, 0) rotate(45deg);
+    right: -3px;
+    left: auto;
+    top: auto;
+    bottom: 6px;
+}
+.tip4::after {
+	transform: translate(100%, 0);
+	right: -6px;
+    left: auto;
+    top: auto;
+    bottom: 0;
+}
+
+
+.tip5::before {
+    transform: translate(0,100%) rotate(135deg);
+	top: auto;
+	right: 6px;
+	bottom: -3px;
+	left: auto;
+}
+.tip5::after {
+	transform:translate(0,100%);
+	top: auto;
+	right: 0;
+	bottom: -6px;
+	left: auto;
+}
+
+.tip6::before {
+    transform: translate(-50%,100%) rotate(135deg);
+	top: auto;
+	right: auto;
+	bottom: -3px;
+	left: 50%;
+}
+.tip6::after {
+	transform:translate(-50%,100%);
+	top: auto;
+	right: auto;
+	bottom: -6px;
+	left: 50%;
+}
+
+.tip7::before {
+    transform: translate(0,100%) rotate(135deg);
+	top: auto;
+	right: auto;
+	bottom: -3px;
+	left: 6px;
+}
+.tip7::after {
+	transform:translate(0,100%);
+	top: auto;
+	right: auto;
+	bottom: -6px;
+	left: 0;
+}
+
+.tip8::before {
+    transform: translate(-100%,0) rotate(225deg);
+	top: auto;
+	right: auto;
+	bottom: 3px;
+	left: -3px;
+}
+.tip8::after {
+	transform: translate(-100%,0);
+	top: auto;
+	right: auto;
+	bottom: -6px;
+	left: -6px;
+}
+
+.tip9::before {
+    transform: translate(-100%,-50%) rotate(225deg);
+	top: 50%;
+	right: auto;
+	bottom: auto;
+	left: -3px;
+}
+.tip9::after {
+	transform: translate(-100%,-50%);
+	top: 50%;
+	right: auto;
+	bottom: auto;
+	left: -6px;
+}
+
+.tip10::before {
+    transform: translate(-100%,0) rotate(225deg);
+	top: 6px;
+	right: auto;
+	bottom: auto;
+	left: -3px;
+}
+.tip10::after {
+	transform: translate(-100%,0);
+	top: 0;
+	right: auto;
+	bottom: auto;
+	left: -6px;
+}

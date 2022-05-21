@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<link rel="stylesheet" type="text/css" href="icons.css">
+	<script src="/lib/jquery.js"></script>
+	<script src="/lib/pixi.js"></script>
+	<script src="/lib/downloadfile.js"></script>
+	<script src="icons_base64.js"></script>
+	<style>
+		body {
+			background: #333;
+			color: #fff;
+		}
+	</style>
+	<title></title>
+</head>
+
+<body>
+	<ul>
+		<li><i class="icons icons_download"></i> icons_download</li>
+		<li><i class="icons icons_dashboard"></i> icons_dashboard</li>
+		<li><i class="icons icons_spaces"></i> icons_spaces</li>
+		<li><i class="icons icons_turnOff"></i> icons_turnOff</li>
+		<li><i class="icons icons_moreBrightness"></i> icons_moreBrightness</li>
+		<li><i class="icons icons_lessBrightness"></i> icons_lessBrightness</li>
+		<li><i class="icons icons_widgets"></i> icons_widgets</li>
+		<li><i class="icons icons_brightness"></i> icons_brightness</li>
+		<li><i class="icons icons_forward"></i> icons_forward</li>
+		<li><i class="icons icons_rewind"></i> icons_rewind</li>
+		<li><i class="icons icons_playPause"></i> icons_playPause</li>
+		<li><i class="icons icons_volumeOff"></i> icons_volumeOff</li>
+		<li><i class="icons icons_lowVolume"></i> icons_lowVolume</li>
+		<li><i class="icons icons_highVolume"></i> icons_highVolume</li>
+		<li><i class="icons icons_application2"></i> icons_application2</li>
+		<li><i class="icons icons_application4"></i> icons_application4</li>
+		<li><i class="icons icons_paintbucket"></i> icons_paintbucket</li>
+		<li><i class="icons icons_text"></i> icons_text</li>
+		<li><i class="icons icons_colorMixer"></i> icons_colorMixer</li>
+		<li><i class="icons icons_selection"></i> icons_selection</li>
+		<li><i class="icons icons_resize"></i> icons_resize</li>
+		<li><i class="icons icons_crop"></i> icons_crop</li>
+		<li><i class="icons icons_roundedSelection"></i> icons_roundedSelection</li>
+		<li><i class="icons icons_switchColors"></i> icons_switchColors</li>
+		<li><i class="icons icons_colors"></i> icons_colors</li>
+		<li><i class="icons icons_noColor"></i> icons_noColor</li>
+		<li><i class="icons icons_wireFrame"></i> icons_wireFrame</li>
+		<li><i class="icons icons_layout"></i> icons_layout</li>
+		<li><i class="icons icons_grid"></i> icons_grid</li>
+		<li><i class="icons icons_topbar"></i> icons_topbar</li>
+		<li><i class="icons icons_expose"></i> icons_expose</li>
+		<li><i class="icons icons_newLayer"></i> icons_newLayer</li>
+		<li><i class="icons icons_lock"></i> icons_lock</li>
+		<li><i class="icons icons_unlock"></i> icons_unlock</li>
+		<li><i class="icons icons_calendar"></i> icons_calendar</li>
+		<li><i class="icons icons_todoList1"></i> icons_todoList1</li>
+		<li><i class="icons icons_rulers"></i> icons_rulers</li>
+		<li><i class="icons icons_writeDocument"></i> icons_writeDocument</li>
+		<li><i class="icons icons_jog"></i> icons_jog</li>
+		<li><i class="icons icons_keyframes"></i> icons_keyframes</li>
+		<li><i class="icons icons_intersect"></i> icons_intersect</li>
+		<li><i class="icons icons_split"></i> icons_split</li>
+		<li><i class="icons icons_union"></i> icons_union</li>
+		<li><i class="icons icons_intersect2"></i> icons_intersect2</li>
+		<li><i class="icons icons_colorPicker"></i> icons_colorPicker</li>
+		<li><i class="icons icons_colorPickerSelected"></i> icons_colorPickerSelected</li>
+		<li><i class="icons icons_reload"></i> icons_reload</li>
+		<li><i class="icons icons_vinyl"></i> icons_vinyl</li>
+		<li><i class="icons icons_acion"></i> icons_acion</li>
+		<li><i class="icons icons_flame"></i> icons_flame</li>
+		<li><i class="icons icons_earth"></i> icons_earth</li>
+		<li><i class="icons icons_oldCamera"></i> icons_oldCamera</li>
+		<li><i class="icons icons_newCamera"></i> icons_newCamera</li>
+		<li><i class="icons icons_zoomInPlace"></i> icons_zoomInPlace</li>
+		<li><i class="icons icons_zoomOutPlace"></i> icons_zoomOutPlace</li>
+		<li><i class="icons icons_refresh"></i> icons_refresh</li>
+		<li><i class="icons icons_settings"></i> icons_settings</li>
+		<li><i class="icons icons_boldPlus"></i> icons_boldPlus</li>
+		<li><i class="icons icons_ghost"></i> icons_ghost</li>
+		<li><i class="icons icons_addScreen"></i> icons_addScreen</li>
+		<li><i class="icons icons_infoScreen"></i> icons_infoScreen</li>
+		<li><i class="icons icons_info"></i> icons_info</li>
+		<li><i class="icons icons_settings1"></i> icons_settings1</li>
+		<li><i class="icons icons_iceCream"></i> icons_iceCream</li>
+		<li><i class="icons icons_drop"></i> icons_drop</li>
+		<li><i class="icons icons_wall"></i> icons_wall</li>
+		<li><i class="icons icons_flag"></i> icons_flag</li>
+		<li><i class="icons icons_roller"></i> icons_roller</li>
+		<li><i class="icons icons_marker"></i> icons_marker</li>
+		<li><i class="icons icons_cutter"></i> icons_cutter</li>
+		<li><i class="icons icons_heart"></i> icons_heart</li>
+		<li><i class="icons icons_gallery"></i> icons_gallery</li>
+		<li><i class="icons icons_addPin"></i> icons_addPin</li>
+		<li><i class="icons icons_star"></i> icons_star</li>
+		<li><i class="icons icons_comment"></i> icons_comment</li>
+		<li><i class="icons icons_chat"></i> icons_chat</li>
+		<li><i class="icons icons_pin"></i> icons_pin</li>
+		<li><i class="icons icons_mail"></i> icons_mail</li>
+		<li><i class="icons icons_newDocument"></i> icons_newDocument</li>
+		<li><i class="icons icons_removePin"></i> icons_removePin</li>
+		<li><i class="icons icons_NYFatcap"></i> icons_NYFatcap</li>
+		<li><i class="icons icons_tiles"></i> icons_tiles</li>
+		<li><i class="icons icons_spraycanEmpty"></i> icons_spraycanEmpty</li>
+		<li><i class="icons icons_fullSparaycan"></i> icons_fullSparaycan</li>
+		<li><i class="icons icons_spraycanHalfFull"></i> icons_spraycanHalfFull</li>
+		<li><i class="icons icons_brush"></i> icons_brush</li>
+		<li><i class="icons icons_toiletPaper"></i> icons_toiletPaper</li>
+		<li><i class="icons icons_subway"></i> icons_subway</li>
+		<li><i class="icons icons_bomb"></i> icons_bomb</li>
+		<li><i class="icons icons_slotenacesta"></i> icons_slotenacesta</li>
+		<li><i class="icons icons_upload"></i> icons_upload</li>
+		<li><i class="icons icons_santasReindeer"></i> icons_santasReindeer</li>
+		<li><i class="icons icons_pointer"></i> icons_pointer</li>
+		<li><i class="icons icons_handy"></i> icons_handy</li>
+		<li><i class="icons icons_home"></i> icons_home</li>
+		<li><i class="icons icons_capricorn1"></i> icons_capricorn1</li>
+		<li><i class="icons icons_paragraphJustify"></i> icons_paragraphJustify</li>
+		<li><i class="icons icons_paragraphLeft"></i> icons_paragraphLeft</li>
+		<li><i class="icons icons_paragraphRight"></i> icons_paragraphRight</li>
+		<li><i class="icons icons_christmassTree"></i> icons_christmassTree</li>
+		<li><i class="icons icons_pcfan"></i> icons_pcfan</li>
+		<li><i class="icons icons_zip"></i> icons_zip</li>
+		<li><i class="icons icons_images"></i> icons_images</li>
+		<li><i class="icons icons_path"></i> icons_path</li>
+		<li><i class="icons icons_plus"></i> icons_plus</li>
+		<li><i class="icons icons_reply"></i> icons_reply</li>
+		<li><i class="icons icons_trash"></i> icons_trash</li>
+		<li><i class="icons icons_retweet"></i> icons_retweet</li>
+		<li><i class="icons icons_unrated"></i> icons_unrated</li>
+		<li><i class="icons icons_rated"></i> icons_rated</li>
+		<li><i class="icons icons_twitter"></i> icons_twitter</li>
+		<li><i class="icons icons_pen"></i> icons_pen</li>
+		<li><i class="icons icons_user2"></i> icons_user2</li>
+		<li><i class="icons icons_users"></i> icons_users</li>
+		<li><i class="icons icons_userComments"></i> icons_userComments</li>
+		<li><i class="icons icons_users2"></i> icons_users2</li>
+		<li><i class="icons icons_usersComents"></i> icons_usersComents</li>
+		<li><i class="icons icons_watchUser"></i> icons_watchUser</li>
+		<li><i class="icons icons_thinkingUser"></i> icons_thinkingUser</li>
+		<li><i class="icons icons_updateSummary"></i> icons_updateSummary</li>
+		<li><i class="icons icons_map"></i> icons_map</li>
+		<li><i class="icons icons_list"></i> icons_list</li>
+		<li><i class="icons icons_orderedList"></i> icons_orderedList</li>
+		<li><i class="icons icons_imageLike"></i> icons_imageLike</li>
+		<li><i class="icons icons_watch"></i> icons_watch</li>
+		<li><i class="icons icons_watchMap"></i> icons_watchMap</li>
+		<li><i class="icons icons_userComment"></i> icons_userComment</li>
+		<li><i class="icons icons_todoList"></i> icons_todoList</li>
+		<li><i class="icons icons_display"></i> icons_display</li>
+		<li><i class="icons icons_user"></i> icons_user</li>
+		<li><i class="icons icons_watchedUser"></i> icons_watchedUser</li>
+		<li><i class="icons icons_addUser"></i> icons_addUser</li>
+		<li><i class="icons icons_removeUser"></i> icons_removeUser</li>
+		<li><i class="icons icons_userInfo"></i> icons_userInfo</li>
+		<li><i class="icons icons_deleteUser"></i> icons_deleteUser</li>
+		<li><i class="icons icons_watchedWall"></i> icons_watchedWall</li>
+		<li><i class="icons icons_tags"></i> icons_tags</li>
+		<li><i class="icons icons_addFlag"></i> icons_addFlag</li>
+		<li><i class="icons icons_zoomOut"></i> icons_zoomOut</li>
+		<li><i class="icons icons_zoomIn"></i> icons_zoomIn</li>
+		<li><i class="icons icons_search"></i> icons_search</li>
+		<li><i class="icons icons_watchHome"></i> icons_watchHome</li>
+		<li><i class="icons icons_taxi"></i> icons_taxi</li>
+		<li><i class="icons icons_car"></i> icons_car</li>
+		<li><i class="icons icons_iphoneVertical"></i> icons_iphoneVertical</li>
+		<li><i class="icons icons_creditCard"></i> icons_creditCard</li>
+		<li><i class="icons icons_imac"></i> icons_imac</li>
+		<li><i class="icons icons_cart"></i> icons_cart</li>
+		<li><i class="icons icons_barcode"></i> icons_barcode</li>
+		<li><i class="icons icons_toCart"></i> icons_toCart</li>
+		<li><i class="icons icons_wallet"></i> icons_wallet</li>
+		<li><i class="icons icons_iphoneHorizontal"></i> icons_iphoneHorizontal</li>
+		<li><i class="icons icons_ok"></i> icons_ok</li>
+		<li><i class="icons icons_ng"></i> icons_ng</li>
+		<li><i class="icons icons_movieFrame"></i> icons_movieFrame</li>
+		<li><i class="icons icons_summary"></i> icons_summary</li>
+		<li><i class="icons icons_coins"></i> icons_coins</li>
+		<li><i class="icons icons_tool"></i> icons_tool</li>
+		<li><i class="icons icons_soundWave"></i> icons_soundWave</li>
+		<li><i class="icons icons_oldPhone"></i> icons_oldPhone</li>
+		<li><i class="icons icons_rightArrow"></i> icons_rightArrow</li>
+		<li><i class="icons icons_leftArrow"></i> icons_leftArrow</li>
+		<li><i class="icons icons_smallerPads"></i> icons_smallerPads</li>
+		<li><i class="icons icons_note"></i> icons_note</li>
+		<li><i class="icons icons_biggerPads"></i> icons_biggerPads</li>
+		<li><i class="icons icons_headphones"></i> icons_headphones</li>
+		<li><i class="icons icons_cd"></i> icons_cd</li>
+		<li><i class="icons icons_arrows"></i> icons_arrows</li>
+	</ul>
+
+	<img id="icons" src="icons.png">
+</body>
+
+<script src="icons.js"></script>
+
+</html>

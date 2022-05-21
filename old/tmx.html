@@ -1,0 +1,149 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<script type="text/javascript" src="/lib/jquery.js"></script>
+	<title>smartcat tmx transfer</title>
+	<style type="text/css">
+		textarea {width:80%;height:4em;display:block;}
+		h3 {border-top:2px solid #ccc}
+	</style>
+	source:<strong id="sourceUI">source</strong>
+	target:<strong id="targetUI">target</strong>
+	<button id="clearLanguageSetting">clear language setting</button>
+	<div>Drop smartcat .tmx file to here!</div>
+</head>
+<body>
+</body>
+</html>
+<script type="text/javascript">
+let re=/[\r\n]/g
+let source=localStorage.getItem('tmxSourceLanguage')
+let target=localStorage.getItem('tmxTargetLanguage')
+$('#clearLanguageSetting').click((e)=>{
+	localStorage.removeItem('tmxSourceLanguage')
+	localStorage.removeItem('tmxTargetLanguage')
+	$('#sourceUI,#targetUI').empty()
+})
+$('#sourceUI').text(source)
+$('#targetUI').text(target)
+
+$(window).on('dragover',e=>{
+	e.preventDefault()
+})
+$(window).on('drop', (e)=>{
+	e.preventDefault()
+	let
+	files=e.originalEvent.dataTransfer.files,
+	length=files.length,
+	file
+
+	while(length-->0) {
+		file=files.item(length)
+
+		readFile(file, (e)=>{
+			let text=e.target.result, name=e.target.file.name
+			if(text){
+				// console.log(name, text)
+				let doc=parseXML(text)
+				let tus=doc.querySelectorAll('tu')
+
+				if(tus.length===0) return ;
+				
+				// langs
+				let tu=tus.item(0)
+				console.log(tu)
+				if(!tu) return ;
+
+				let langs=Array.from(tu.children).map(tuv=>tuv.getAttribute('xml:lang'))
+				// console.log(langs)
+				let _l
+
+				source=localStorage.getItem('tmxSourceLanguage')||prompt('source language: '+langs.join(' | '), _l=langs.shift())||_l;
+				target=localStorage.getItem('tmxTargetLanguage')||prompt('target language: '+langs.join(' | '), _l=langs.shift())||_l;
+
+				localStorage.setItem('tmxSourceLanguage',source)
+				localStorage.setItem('tmxTargetLanguage',target)
+				$('#sourceUI').text(source)
+				$('#targetUI').text(target)
+
+				let h3=document.createElement('h3')
+				document.body.appendChild(h3)
+				let ta=document.createElement('textarea')
+				document.body.appendChild(ta)
+				let s=[],_s,_t;
+				Array.from(tus).forEach(tu=>{
+					_s=_t=''
+					Array.from(tu.children).forEach(tuv=>{
+						switch(tuv.getAttribute('xml:lang')){
+							case source:
+								_s=tuv.querySelector('seg').textContent.trim().replace(re,'\\n')
+								break
+							case target:
+								_t=tuv.querySelector('seg').textContent.trim().replace(re,'\\n')
+								break
+						}
+						
+						
+						if(_s && _t) {
+							s.push(_s+'\t'+_t)
+							return console.log(_s,_t);
+						}
+					})
+
+					s=Array.from(new Set(s))
+					ta.value=s.join('\n')
+				})
+				h3.textContent=name+' - '+s.length
+			}
+		})
+	}
+
+
+
+
+	console.log(files)
+
+})
+
+
+function readFile(file,callback){
+	let l=new FileReader()
+	l.readAsText(file)
+	l.file=file
+	l.onload=callback
+	
+}
+
+function parseXML(xml,name){
+	// autoincrement
+	parseXML.length++
+	name=name||parseXML.length
+	console.log(name)
+
+	let p   = new DOMParser();
+	let doc = p.parseFromString(xml, 'application/xml');
+	parseXML.cache[name]=doc
+	return doc
+}
+parseXML.cache={}
+parseXML.length=0
+
+
+function array2table(a) {
+	let len=a.length
+	if(len){
+		let td=document.createElement('td'), s='',_s,_t
+		while(len-->0){
+			td.textContent=a[1]
+			_t=td.outerHTML
+			td.textContent=a[0]
+			_s=td.outerHTML
+			s='<tr>'+_s+_t+'</tr>'+s
+		}
+		s='<table><tbody>'+s+'</tbody></table>'
+	}
+}
+
+</script>

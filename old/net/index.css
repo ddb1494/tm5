@@ -1,0 +1,27 @@
+* {
+	font-family: Tahoma,"Margun Ghotic","Microsoft Yahei";
+	margin: 0;
+	padding: 0;
+}
+#box1 td {
+	min-width: 20em;
+	width:50em;
+	height:24em;
+}
+textarea {
+	width: 100%;
+	height: 100%;
+	border:1px solid green;
+	border-style: inset;
+	outline:none;
+	resize: horizontal;
+	font-size: 12pt;
+	font-weight: bold;
+}
+table{
+	border:1px solid #eee;
+	border-style: inset;
+}
+label {
+	font-weight: bold;
+}

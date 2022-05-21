@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>Pattern Trans</title>
+</head>
+
+<body>
+	<style>
+		* {
+			box-sizing: border-box;
+			outline-width: 1px !important;
+			padding: 0;
+			margin: 0;
+			overflow: overlay;
+			font-family: Microsoft Yahei, Meiryo UI, Malgun Cothic;
+		}
+
+		table {
+			border-collapse: collapse;
+			margin: 0 auto;
+			height: 100vh;
+			font-size: 10pt;
+		}
+
+		th {
+			height: 1em;
+			background-color: #eee;
+		}
+
+		#source,
+		#target {
+			-webkit-user-modify: read-write;
+			white-space: pre-wrap;
+			word-wrap: break-word;
+			word-break: break-all;
+			width: 50vw;
+			max-width: 50vw;
+			min-width: 50vw;
+			vertical-align: top;
+			padding: 1em;
+		}
+
+		.symbol,
+		.regexp {
+			user-select: none;
+			-webkit-user-select: none;
+			user-modify: read-only!important;
+			-webkit-user-modify: read-only!important;
+			padding: 2px 4px;
+			margin: 0;
+			font-size: x-small;
+			line-height: 1.5em;
+			border-radius: 0.5em;
+			cursor: pointer;
+		}
+
+		.symbol {
+			background-color: #444;
+			color: #ddd;
+		}
+
+		.regexp {
+			background-color: #111;
+			color: #eee;
+		}
+
+		.symbol:hover {
+			background-color: gold;
+		}
+
+		.regexp:hover {
+			background-color: gold;
+		}
+
+		#target {
+			border-left: 0.5px solid #eee;
+		}
+	</style>
+	<table>
+		<tr>
+			<th>Source</th>
+			<th>Target</th>
+		</tr>
+		<tr>
+			<th>
+				<label>begin<input id="begin" type="checkbox" value="begin" checked></label>
+				<label><input id="end" type="checkbox" value="end" checked>end</label>
+				<button id="filterButton">Filter(ctrl+f)</button>
+			</th>
+			<th><button id="applyButton">Apply(ctrl+enter)</button></th>
+		</tr>
+		<tr>
+			<td id="source" autofocus></td>
+			<td id="target"></td>
+		</tr>
+		<tr>
+			<th colspan="2">F9키로 변수 입력합니다</th>
+		</tr>
+	</table>
+
+</body>
+<script>
+	// if (!self.opener) { let s = '需要父级窗口'; document.body.innerHTML = s; throw new Error(s); }
+
+	let selection = getSelection();
+	let i = 0;
+
+	// F9插入标签
+	self.addEventListener('keydown', (e) => {
+		if (e.repeat) return;
+		let { target } = e;
+		console.log(e.key)
+		if (e.keyCode === 120) {// F9
+			// if (target.nodeName !== 'TD') return;
+			
+			if (!e.altKey && !e.shiftKey && !e.metaKey) {
+				e.preventDefault();
+				//F9
+				let id = target.getAttribute('id');
+				if (id === 'source') {
+					let range = selection.getRangeAt(0);
+
+					if (range) {
+						i++;
+
+						let symbol = document.createElement('b');
+						symbol.className = 'symbol';
+						symbol.setAttribute('name', 'p' + i);
+						symbol.textContent = 'p' + i;
+
+						range.deleteContents();
+						range.insertNode(symbol);
+						range.collapse(false);
+
+						symbol.addEventListener('contextmenu', (e) => {
+							e.preventDefault();
+							let name = e.target.getAttribute('name');
+							Array.from(document.querySelector('#target').querySelectorAll('.symbol')).some(e => {
+								let _name = e.getAttribute('name');
+								let b = name === _name;
+								if (b) e.remove();
+								return b;
+							});
+							e.target.remove();
+						})
+					}
+				} else if (id === 'target') {
+					let range = selection.getRangeAt(0);
+
+					if (range) {
+
+						let source = document.querySelector('#source');
+
+						let sourceSymbols = Array.from(source.querySelectorAll('.symbol'), e => e.getAttribute('name'));
+						let targetSymbols = Array.from(target.querySelectorAll('.symbol'), e => e.getAttribute('name'));
+
+						console.log(sourceSymbols)
+						console.log(targetSymbols)
+
+						sourceSymbols.some(name => {
+							let b = !targetSymbols.includes(name);
+							if (b) {
+								let symbol = document.createElement('b');
+								symbol.className = 'symbol';
+								symbol.setAttribute('name', name);
+								symbol.textContent = name;
+								symbol.addEventListener('contextmenu', (e) => e.target.remove());
+
+								range.deleteContents();
+								range.insertNode(symbol);
+								range.collapse(false);
+							}
+							return b;
+						})
+					}
+
+				}
+			} else {
+				//(ctrl|alt|shift)+F9
+				console.log('(ctrl|alt|shift)+F9')
+				let range = selection.getRangeAt(0);
+				if (range) {
+					let symbol = document.createElement('b');
+					symbol.className = 'regexp';
+					let regexpSource = prompt()
+					if (regexpSource) {
+						symbol.setAttribute('name', regexpSource);
+						symbol.textContent = regexpSource;
+
+						range.deleteContents();
+						range.insertNode(symbol);
+						range.collapse(false);
+
+						symbol.addEventListener('contextmenu', (e) => {
+							e.preventDefault();
+							let name = e.target.getAttribute('name');
+							Array.from(document.querySelector('#target').querySelectorAll('.symbol')).some(e => {
+								let _name = e.getAttribute('name');
+								let b = name === _name;
+								if (b) e.remove();
+								return b;
+							});
+							e.target.remove();
+						})
+					}
+				}
+			}
+
+
+		} else if (e.keyCode === 70 && !e.altKey && !e.shiftKey && !e.metaKey) {// ctrl+f
+			e.preventDefault();
+			document.querySelector('#filterButton').click();
+
+
+		} else if (e.keyCode === 13 && !e.altKey && !e.shiftKey && !e.metaKey) {// ctrl+enter
+			e.preventDefault();
+			document.querySelector('#applyButton').click();
+		}
+
+	}, { capture: true, passive: false, once: false });
+
+	window.addEventListener('contextmenu', (e) => e.preventDefault());
+
+
+	function getPatern(id, b = true) {
+		let element = document.getElementById(id);
+		element.normalize();
+
+		return Array.from(element.childNodes).map(e => {
+			let result = '';
+			switch (e.nodeType) {
+				case 3:
+					result = b ? e.data.replace(/[\?\!\:\-\*\+\/\\\(\)\<\>\[\]\{\}\.]/g, '\\$&') : e.data;
+					break;
+				case 1:
+					result = { type: e.getAttribute('class'), name: e.getAttribute('name') };
+					break;
+				default:
+					result = String(e);
+					break;
+			}
+			return result;
+		});
+	}
+
+
+	document.querySelector('#filterButton').addEventListener('click', e => {
+		opener.postMessage({
+			type: 'paterntrans-filter',
+			source: getPatern('source'),
+			begin: document.querySelector('#begin').checked,
+			end: document.querySelector('#end').checked,
+		});
+	});
+	document.querySelector('#applyButton').addEventListener('click', e => {
+		opener.postMessage({
+			type: 'paterntrans-apply',
+			source: getPatern('source'),
+			target: getPatern('target', false),// 坑：对target没有必要转义，因为没用正则方式。
+			begin: document.querySelector('#begin').checked,
+			end: document.querySelector('#end').checked,
+		});
+	});
+
+	document.querySelector('#end').addEventListener('click', (e) => document.querySelector('#source').focus())
+	document.querySelector('#begin').addEventListener('click', (e) => document.querySelector('#source').focus())
+
+	self.addEventListener('message', (e) => {
+		if (e.data.type === 'init') {
+			document.querySelector('#source').textContent = e.data.source;
+			document.querySelector('#target').textContent = e.data.target;
+		}
+		console.log(e.data)
+	}, { capture: false });
+
+	self.addEventListener('load', (e) => {
+		opener.postMessage({ type: 'init' });
+	});
+
+	self.addEventListener('paste', (e) => {
+		let { target, clipboardData } = e;
+
+		let isExit = true;
+		let td = target;
+		do {
+			let id = td.getAttribute('id');
+			if (id === 'source' || id === 'target') {
+				isExit = false;
+				break;
+			}
+		} while (td = td.parentElement);
+
+		if (isExit) return;
+
+		let data = clipboardData.getData('text/plain')
+		e.preventDefault();
+
+		let range = selection.getRangeAt(0);
+		range.deleteContents();
+		range.insertNode(new Text(data));
+		range.collapse(false);
+	});
+
+
+	self.addEventListener('click', function (e) {
+		if (e.target.classList.contains('symbol')) {
+			let name = e.target.getAttribute('name');
+			if (name.slice(0) === 'p') {
+				name = 'c' + name.slice(1);
+			} else {
+				name = 'p' + name.slice(1);
+			}
+			console.log(name);
+			e.target.setAttribute('name', name);
+			e.target.textContent = name;
+		}
+	});
+
+	self.addEventListener('beforeunload', function (e) {
+		opener.postMessage({ type: 'close' });
+	});
+</script>
+
+</html>
